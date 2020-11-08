@@ -1,9 +1,23 @@
-ankietapp-backend
+# ankietapp-backend
 
-install mysql
+## Description
+Backend for the survey management app "ankietApp"
 
-npm i
+## Requirements
+- Node.js
+- mySQL
 
-npm i typeorm -g
-
-npm run dev
+## Install
+Install typescript
+```
+$ npm install -g typescript
+```
+Install dependencies
+```
+$ npm install
+```
+Run app (PORT 8080)
+```
+$ npm run dev
+```
+Go to http://localhost:8080
