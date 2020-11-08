@@ -1,10 +1,14 @@
 POST http://localhost:8080/surveys
 content-type: application/json
 {
-		"surveyName": "ankieta",
+		"name": "ankieta",
 		"description": "Janek prosi o wypełnienie poniższej ankiety do pracy magisterskiej",
-		"surveyDueDate": "2021-04-23T18:25:43.511Z",
-		"users": "everyone", // lub wielu użytkowników "users": {1, 4, 7, 23}, może zrobić jako liste emaili użytkowników?
+		"dueDate": "2021-04-23T18:25:43.511Z",
+		"users": [
+			"example@email.com",
+			"example@email2.com",
+			"example@email3.com"
+		],
     "questions": 
     [
       {
