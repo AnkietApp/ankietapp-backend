@@ -8,6 +8,10 @@ Backend for the survey management app "ankietApp"
 - mySQL
 
 ## Install
+Create database
+```
+mysql> CREATE DATABASE ankietApp;
+```
 Install typescript
 ```
 $ npm install -g typescript
