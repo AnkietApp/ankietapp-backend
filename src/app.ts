@@ -1,60 +1,23 @@
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
-import express, { Application, Request, Response, NextFunction } from 'express';
-import * as bodyParser from 'body-parser';
-import { Routes } from './routes/routes';
-import { User } from './entity/User';
-import { Survey } from './entity/Survey';
+import express, { Request, Response, NextFunction } from 'express';
+import morgan from 'morgan';
+import cors from 'cors';
 
-createConnection()
-  .then(async (connection) => {
-    // create express app
-    const app = express();
-    app.use(bodyParser.json());
+import userRoutes from './routes/user.routes';
+import surveyRoutes from './routes/survey.routes';
 
-    // register express routes from defined application routes
-    Routes.forEach((route) => {
-      (app as any)[route.method](
-        route.route,
-        (req: Request, res: Response, next: NextFunction) => {
-          const result = new (route.controller as any)()[route.action](
-            req,
-            res,
-            next
-          );
-          if (result instanceof Promise) {
-            result.then((result) =>
-              result !== null && result !== undefined
-                ? res.send(result)
-                : undefined
-            );
-          } else if (result !== null && result !== undefined) {
-            res.json(result);
-          }
-        }
-      );
-    });
+const app = express();
+createConnection();
 
-    // setup express app here
-    // ...
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(morgan('dev'));
 
-    // start express server
-    app.listen(3000);
+// Routes
+app.use(userRoutes);
+app.use(surveyRoutes);
 
-    // insert new users for test
-    await connection.manager.save(
-      connection.manager.create(User, {
-        firstName: 'john',
-        lastName: 'doe'
-      })
-    );
-    await connection.manager.save(
-      connection.manager.create(Survey, {
-        name: 'Hello Survey',
-        deadline: new Date().toLocaleString()
-      })
-    );
-
-    console.log('Express server has started on port 3000');
-  })
-  .catch((error) => console.log(error));
+// Start express server
+app.listen(8080, () => console.log('Express server has started on port 8080'));
