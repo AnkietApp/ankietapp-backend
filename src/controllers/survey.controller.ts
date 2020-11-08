@@ -12,6 +12,8 @@ export const getSurveys = async (
   } catch (err) {
     return res.send(err);
   }
+  const surveys = await getRepository(Survey).find();
+  return res.json(surveys);
 };
 
 export const getSurvey = async (
@@ -24,6 +26,8 @@ export const getSurvey = async (
   } catch (err) {
     return res.send(err);
   }
+  const results = await getRepository(Survey).findOne(req.params.id);
+  return res.json(results);
 };
 
 export const createSurvey = async (
@@ -37,6 +41,9 @@ export const createSurvey = async (
   } catch (err) {
     return res.send(err);
   }
+  const newSurvey = await getRepository(Survey).create(req.body);
+  const results = await getRepository(Survey).save(newSurvey);
+  return res.json(results);
 };
 
 export const updateSurvey = async (
@@ -52,6 +59,11 @@ export const updateSurvey = async (
     }
   } catch (err) {
     return res.send(err);
+  const survey = await getRepository(Survey).findOne(req.params.id);
+  if (survey) {
+    getRepository(Survey).merge(survey, req.body);
+    const results = await getRepository(Survey).save(survey);
+    return res.json(results);
   }
 
   return res.json({ msg: 'Not survey found' });
@@ -67,4 +79,6 @@ export const deleteSurvey = async (
   } catch (err) {
     return res.send(err);
   }
+  const results = await getRepository(Survey).delete(req.params.id);
+  return res.json(results);
 };
