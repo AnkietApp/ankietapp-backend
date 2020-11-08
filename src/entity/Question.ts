@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany
+} from 'typeorm';
+import Survey from './Survey';
+import Answer from './Answer';
+import Choice from './Choice';
 
 @Entity()
 export default class Question {
@@ -7,4 +16,19 @@ export default class Question {
 
   @Column()
   description: string;
+
+  @Column()
+  type: string;
+
+  @Column()
+  sortOrder: number;
+
+  @OneToMany(() => Answer, (answer) => answer.question)
+  answers: Answer[];
+
+  @OneToMany(() => Choice, (choice) => choice.question)
+  choices: Choice[];
+
+  @ManyToOne(() => Survey, (survey) => survey.questions)
+  survey: Survey;
 }

@@ -1,13 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { IsEmail } from 'class-validator';
+
+import UserSurveyResponse from './UserSurveyResponse';
 
 @Entity()
-export class User {
+export default class User {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  firstName: string;
+  @IsEmail()
+  email: string;
 
   @Column()
-  lastName: string;
+  isAdmin: boolean;
+
+  @OneToMany(
+    () => UserSurveyResponse,
+    (userSurveyResponse) => userSurveyResponse.user
+  )
+  public userSurveyResponses: UserSurveyResponse[];
 }
