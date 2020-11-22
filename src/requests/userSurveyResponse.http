@@ -1,0 +1,29 @@
+POST http://localhost:8080/user-survey-response
+content-type: application/json
+{
+    "user_id": "1",
+    "survey_id": "1",
+    "answers": 
+    [
+      {
+        "questionId": "1",
+        "value": "Odpowiedź"
+      },
+      {
+        "questionId": "2",
+        "value": "0"
+      },
+      {
+        "questionId": "2",
+        "value": "2"
+      },
+      {
+        "questionId": "3",
+        "value": "5"
+      },
+      {
+        "questionId": "4",
+        "value": "Inna odpowiedź"
+      }
+    ]
+}
