@@ -1,9 +1,9 @@
+/* eslint-disable import/prefer-default-export */
 import { getRepository } from 'typeorm';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 import UserSurveyResponse from '../entity/UserSurveyResponse';
 import Answer from '../entity/Answer';
-import Choice from '../entity/Choice';
 
 export const createSurveyResponse = async (
     req: Request,
@@ -18,9 +18,8 @@ export const createSurveyResponse = async (
         const newResponse: UserSurveyResponse = getRepository(UserSurveyResponse).create(responseFromReq);
         const savedSurvey: UserSurveyResponse = await getRepository(UserSurveyResponse).save(newResponse);
         req.body.answers.forEach(async (answer: Answer) => {
-            answer.userSurveyResponseId = savedSurvey.id;
-            const newAnswer: Answer = await getRepository(Answer).create(answer);
-            const savedAsnwer: Answer = await getRepository(Answer).save(newAnswer);
+            const newAnswer: Answer = getRepository(Answer).create({ ...answer, userSurveyResponseId: savedSurvey.id });
+            await getRepository(Answer).save(newAnswer);
         });
         return res.json(savedSurvey);
     }
