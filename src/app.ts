@@ -10,6 +10,7 @@ import passportConfig from './config/passport';
 import userRoutes from './routes/user.routes';
 import surveyRoutes from './routes/survey.routes';
 import authRoutes from './routes/auth.routes';
+import userSurveyResponseRoutes from './routes/usersurveyresponse.routes';
 
 const app = express();
 createConnection();
@@ -27,6 +28,7 @@ passport.use(passportConfig);
 app.use(userRoutes);
 app.use(surveyRoutes);
 app.use(authRoutes);
+app.use(userSurveyResponseRoutes);
 
 // Start express server
 app.listen(8080, () => console.log('Express server has started on port 8080'));
