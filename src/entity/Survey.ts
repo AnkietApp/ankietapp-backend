@@ -15,6 +15,9 @@ export default class Survey {
   description: string;
 
   @Column()
+  public: boolean;
+
+  @Column()
   @IsDate()
   dueDate: Date;
 
