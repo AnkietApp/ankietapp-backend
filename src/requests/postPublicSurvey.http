@@ -1,0 +1,43 @@
+POST http://localhost:8080/surveys
+content-type: application/json
+{
+    "name": "ankieta",
+    "description": "Janek prosi o wypełnienie poniższej ankiety do pracy magisterskiej",
+    "dueDate": "2021-04-23T18:25:43.511Z",
+    "public": true,
+    "users": [],
+    "questions": 
+    [
+      {
+        "description": "Jak masz na imię?",
+        "type": "text",
+        "sortOrder": 1
+      },
+      {
+        "description": "Podaj datę urodzenia",
+        "type": "date",
+        "sortOrder": 2
+      },
+      {
+        "description": "Wybierz ulubione przedmioty szkolne",
+        "type": "multipleChoice",
+        "choices": [
+          "matma",
+          "angielski",
+          "fizyka"
+        ],
+        "sortOrder": 3
+      },
+      {
+        "description": "Ile kaw pijesz dziennie?",
+        "type": "singleChoice",
+        "choices": [
+          "1",
+          "2",
+          "3",
+          "więcej niż 3"
+        ],
+        "sortOrder": 4
+      }
+    ]
+}

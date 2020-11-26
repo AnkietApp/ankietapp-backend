@@ -4,10 +4,13 @@ import { NextFunction, Request, Response } from 'express';
 import Survey from '../entity/Survey';
 import Question from '../entity/Question';
 import Choice from '../entity/Choice';
+import User from '../entity/User';
+
 import {
   MULTIPLE_CHOICE_QUESTION,
   SINGLE_CHOICE_QUESTION
 } from '../utils/constants';
+import UserSurveyResponse from '../entity/UserSurveyResponse';
 
 export const getSurveys = async (
   req: Request,
@@ -40,7 +43,8 @@ export const createSurvey = async (
   const surveyFromReq = {
     name: req.body.name,
     description: req.body.description,
-    dueDate: req.body.dueDate
+    dueDate: req.body.dueDate,
+    public: req.body.public
   };
 
   try {
@@ -70,6 +74,36 @@ export const createSurvey = async (
         });
       }
     });
+
+    let users: User[];
+
+    if (savedSurvey.public) {
+      users = await getRepository(User)
+        .createQueryBuilder('user')
+        .select(['user.id'])
+        .getMany();
+    } else {
+      users = await getRepository(User)
+        .createQueryBuilder('user')
+        .select(['user.id'])
+        .where('user.email IN (:emails)', {
+          emails: req.body.users
+        })
+        .getMany();
+    }
+    users.forEach(async (user: User) => {
+      const newUserSurveyResponse: UserSurveyResponse = await getRepository(
+        UserSurveyResponse
+      ).create({
+        userId: user.id,
+        surveyId: savedSurvey.id,
+        completed: false
+      });
+      const savedUserSurveyResponse: UserSurveyResponse = await getRepository(
+        UserSurveyResponse
+      ).save(newUserSurveyResponse);
+    });
+
     return res.json(savedSurvey);
   } catch (err) {
     return res.send(err);
