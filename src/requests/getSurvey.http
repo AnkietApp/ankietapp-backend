@@ -1,0 +1,76 @@
+REQUEST:
+GET http://localhost:8080/survey/:id
+headers: { Authorization: "Bearer " + tokenGoesHere }
+
+RESPONSE:
+{
+  "userSurveyResponseId":"34830924",
+  "survey":{
+    "id": 1,
+    "name":"ankieta 1",
+    "description":"Janek prosi o wypełnienie poniższej ankiety do pracy magisterskiej",
+    "dueDate":"2021-04-23T18:25:43.511Z",
+    "public":true,
+    "users":[
+      
+    ],
+    "questions":[
+      {
+        "id":1,
+        "description":"Jak masz na imię?",
+        "type":"text",
+        "sortOrder":1
+      },
+      {
+        "id":2,
+        "description":"Podaj datę urodzenia",
+        "type":"date",
+        "sortOrder":2
+      },
+      {
+        "id":3,
+        "description":"Wybierz ulubione przedmioty szkolne",
+        "type":"multipleChoice",
+        "choices":[
+          {
+            "id":1,
+            "value":"matma"
+          },
+          {
+            "id":1,
+            "value":"angielski"
+          },
+          {
+            "id":1,
+            "value":"fizyka"
+          }
+        ],
+        "sortOrder":3
+      },
+      {
+        "id":4,
+        "description":"Ile kaw pijesz dziennie?",
+        "type":"singleChoice",
+        "choices":[
+          {
+            "id":1,
+            "value":"1"
+          },
+          {
+            "id":2,
+            "value":"2"
+          },
+          {
+            "id":3,
+            "value":"3"
+          },
+          {
+            "id":4,
+            "value":"Więcej niż 3"
+          }
+        ],
+        "sortOrder":4
+      }
+    ]
+  }
+}
