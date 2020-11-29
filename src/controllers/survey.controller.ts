@@ -1,5 +1,6 @@
 import { getRepository } from 'typeorm';
 import { NextFunction, Request, Response } from 'express';
+import sendEmail from '../utils/mailgun';
 
 import Survey from '../entity/Survey';
 import Question from '../entity/Question';
@@ -77,20 +78,23 @@ export const createSurvey = async (
 
     let users: User[];
 
+    // TODO Refactor into one block of code
     if (savedSurvey.public) {
       users = await getRepository(User)
         .createQueryBuilder('user')
-        .select(['user.id'])
+        .select(['user.id', 'user.email'])
         .getMany();
     } else {
       users = await getRepository(User)
         .createQueryBuilder('user')
-        .select(['user.id'])
-        .where('user.email IN (:emails)', {
+        .select(['user.id', 'user.email'])
+        .where('user.email IN (:...emails)', {
           emails: req.body.users
         })
         .getMany();
     }
+
+    // TODO Refactor into bulk insert
     users.forEach(async (user: User) => {
       const newUserSurveyResponse: UserSurveyResponse = await getRepository(
         UserSurveyResponse
@@ -104,7 +108,24 @@ export const createSurvey = async (
       ).save(newUserSurveyResponse);
     });
 
-    return res.json(savedSurvey);
+    const to = users
+      .map((user) => {
+        return user.email;
+      })
+      .join(', ');
+
+    const from = 'AnkietApp <ankiet@pp.mailgun.org>';
+    const subject = `${savedSurvey.description}`;
+    const content = `Head to: localhost:4200 and finish your survey! ${savedSurvey.name}`;
+
+    try {
+      await sendEmail(to, from, subject, content);
+    } catch (e) {
+      console.log(e);
+      res.status(500);
+    }
+
+    return res.status(201).json(savedSurvey);
   } catch (err) {
     return res.send(err);
   }
