@@ -36,7 +36,12 @@ export const getSurvey = async (
       .select(['userSurveyResponse.id'])
       .where('userSurveyResponse.surveyId = :surveyId')
       .andWhere('userSurveyResponse.userId = :userId')
-      .setParameters({ surveyId: req.params.id, userId: user.id })
+      .andWhere('userSurveyResponse.completed = :completed')
+      .setParameters({
+        surveyId: req.params.id,
+        userId: user.id,
+        completed: false
+      })
       .getOne();
 
     const survey = await getRepository(Survey).findOne(req.params.id, {
