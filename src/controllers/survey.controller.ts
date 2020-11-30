@@ -29,9 +29,23 @@ export const getSurvey = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
+  const user = (<any>req).user;
   try {
-    const results = await getRepository(Survey).findOne(req.params.id);
-    return res.json(results);
+    const userSurveyResponse = await getRepository(UserSurveyResponse)
+      .createQueryBuilder('userSurveyResponse')
+      .select(['userSurveyResponse.id'])
+      .where('userSurveyResponse.surveyId = :surveyId')
+      .andWhere('userSurveyResponse.userId = :userId')
+      .setParameters({ surveyId: req.params.id, userId: user.id })
+      .getOne();
+
+    const survey = await getRepository(Survey).findOne(req.params.id, {
+      relations: ['questions', 'questions.choices']
+    });
+    return res.json({
+      userSurveyResponseId: userSurveyResponse!.id,
+      survey: survey
+    });
   } catch (err) {
     return res.send(err);
   }
