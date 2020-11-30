@@ -17,8 +17,34 @@ export const getSurveys = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
+  const user = (<any>req).user;
+
   try {
-    const surveys = await getRepository(Survey).find();
+    const userSurveyResponses = await getRepository(UserSurveyResponse)
+      .createQueryBuilder('userSurveyResponse')
+      .select(['userSurveyResponse.id', 'userSurveyResponse.surveyId'])
+      .where('userSurveyResponse.userId = :userId')
+      .andWhere('userSurveyResponse.completed = :completed')
+      .setParameters({
+        userId: user.id,
+        completed: false
+      })
+      .getMany();
+    const surveyIds = userSurveyResponses.map((userSurveyResponse) => {
+      return userSurveyResponse.surveyId;
+    });
+
+    const surveys = await getRepository(Survey)
+      .createQueryBuilder('survey')
+      .select([
+        'survey.id',
+        'survey.name',
+        'survey.description',
+        'survey.dueDate'
+      ])
+      .where('survey.id IN (:surveyIds)', { surveyIds: surveyIds })
+      .getMany();
+
     return res.json(surveys);
   } catch (err) {
     return res.send(err);
