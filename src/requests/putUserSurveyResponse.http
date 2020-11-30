@@ -3,7 +3,6 @@ PUT http://localhost:8080/user-survey-response/:id
 
 headers: { Authorization: "Bearer " + tokenGoesHere }
 
-RESPONSE:
 content-type: application/json
 {
     "answers": 
