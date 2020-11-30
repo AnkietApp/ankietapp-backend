@@ -11,7 +11,7 @@ import {
 
 const router = Router();
 
-router.get('/surveys', getSurveys);
+router.get('/surveys', jwtAuth, getSurveys);
 router.get('/surveys/:id', jwtAuth, getSurvey);
 router.post('/surveys', createSurvey);
 router.put('/surveys/:id', updateSurvey);
