@@ -5,23 +5,34 @@ import { Request, Response } from 'express';
 import UserSurveyResponse from '../entity/UserSurveyResponse';
 import Answer from '../entity/Answer';
 
-export const createSurveyResponse = async (
+export const updateSurveyResponse = async (
     req: Request,
     res: Response
 ): Promise<Response> => {
-    const responseFromReq = {
-        userId: req.body.user_id,
-        surveyId: req.body.survey_id,
-        completed: true
-    };
+    const user = (<any>req).user;
     try {
-        const newResponse: UserSurveyResponse = getRepository(UserSurveyResponse).create(responseFromReq);
-        const savedSurvey: UserSurveyResponse = await getRepository(UserSurveyResponse).save(newResponse);
+        const userResponse = await getRepository(UserSurveyResponse)
+      .createQueryBuilder('userSurveyResponse')
+      .select()
+      .where('userSurveyResponse.id = :userResponseId')
+      .andWhere('userSurveyResponse.userId = :userId')
+      .andWhere('userSurveyResponse.completed = :completed')
+      .setParameters({
+        userResponseId: req.params.id,
+        userId: user.id,
+        completed: false
+      })
+      .getOne();
+        getRepository(UserSurveyResponse).update(userResponse!.id, {...userResponse!, completed: true});
+        const updatedResponse = await getRepository(UserSurveyResponse).findOne({ where: {id: req.params.id, userId: user.id, completed: true}});
+        console.log(updatedResponse);
+
         req.body.answers.forEach(async (answer: Answer) => {
-            const newAnswer: Answer = getRepository(Answer).create({ ...answer, userSurveyResponseId: savedSurvey.id });
+            const newAnswer: Answer = getRepository(Answer).create({ ...answer, userSurveyResponseId: updatedResponse!.id });
             await getRepository(Answer).save(newAnswer);
         });
-        return res.json(savedSurvey);
+        return res.json(updatedResponse);
+        
     }
     catch (err) {
         return res.send(err);
