@@ -24,7 +24,8 @@ export default class User {
   @Column()
   password: string;
 
-  @Column()
+  // TODO Check if works
+  @Column({ default: false })
   isAdmin: boolean;
 
   @OneToMany(
