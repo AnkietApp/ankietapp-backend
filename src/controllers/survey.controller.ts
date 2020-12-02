@@ -139,6 +139,10 @@ export const createSurvey = async (
         .getMany();
     }
 
+    if (!users.length) {
+      return res.status(201).json(savedSurvey);
+    }
+
     // TODO Refactor into bulk insert
     users.forEach(async (user: User) => {
       const newUserSurveyResponse: UserSurveyResponse = await getRepository(

@@ -1,7 +1,11 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { getRepository } from 'typeorm';
+import { getRepository, getConnection } from 'typeorm';
+import sendEmail from '../utils/mailgun';
 
+import UserSurveyResponse from '../entity/UserSurveyResponse';
+import Survey from '../entity/Survey';
+import { INewUserSurveyResponse } from '../interfaces/IUserSurveyResponse';
 import User from '../entity/User';
 import { JWT_SECRET } from '../utils/secrets';
 
@@ -18,26 +22,71 @@ export const signUp = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  if (!req.body.email || !req.body.password) {
-    return (
-      res
-        .status(400)
-        // TODO Refactor return message to be not redundant. Extract to different module
-        .json({ error: { message: 'Please. Send your email and password' } })
-    );
+  const userFromReq = {
+    email: req.body.email,
+    password: req.body.password
+  };
+
+  if (!userFromReq.email || !userFromReq.password) {
+    return res
+      .status(400)
+      .json({ error: { message: 'Please. Send your email and password' } });
   }
 
-  const user = await getRepository(User).findOne({ email: req.body.email });
+  const user = await getRepository(User).findOne({ email: userFromReq.email });
   if (user) {
     return res
       .status(400)
       .json({ error: { message: 'The User already Exists' } });
   }
-  const newUser = await getRepository(User).create({
-    ...req.body,
+
+  const newUser: User = await getRepository(User).create({
+    ...userFromReq,
     isAdmin: false
   });
-  const savedUser = await getRepository(User).save(newUser);
+  const savedUser: User = await getRepository(User).save(newUser);
+
+  // Get all public Survey Ids
+  const surveys = await getRepository(Survey)
+    .createQueryBuilder('survey')
+    .select(['survey.id'])
+    .where('survey.public = :public', { public: true })
+    .getMany();
+
+  if (!surveys.length) {
+    return res.status(201).json(savedUser);
+  }
+
+  // Bulk insert emptySurveyResponses
+  const emptyResponses: INewUserSurveyResponse[] = [];
+
+  surveys.forEach((survey) => {
+    emptyResponses.push({
+      userId: savedUser.id,
+      surveyId: survey.id,
+      completed: false
+    });
+  });
+
+  await getConnection()
+    .createQueryBuilder()
+    .insert()
+    .into(UserSurveyResponse)
+    .values(emptyResponses)
+    .execute();
+
+  // Send email to user
+  const to = savedUser.email;
+  const from = 'AnkietApp <ankiet@pp.mailgun.org>';
+  const subject = `Hello ${savedUser.email}, You have surveys to complete!`;
+  const content = `Head to: localhost:4200 and finish your surveys!`;
+
+  try {
+    await sendEmail(to, from, subject, content);
+  } catch (e) {
+    console.log(e);
+  }
+
   return res.status(201).json(savedUser);
 };
 
