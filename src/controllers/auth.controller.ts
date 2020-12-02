@@ -9,6 +9,8 @@ import { INewUserSurveyResponse } from '../interfaces/IUserSurveyResponse';
 import User from '../entity/User';
 import { JWT_SECRET } from '../utils/secrets';
 
+import { INewUser } from '../interfaces/IUser';
+
 // TODO Set in env
 const TOKEN_TIMEOUT = 3600;
 
@@ -22,9 +24,10 @@ export const signUp = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const userFromReq = {
+  const userFromReq: INewUser = {
     email: req.body.email,
-    password: req.body.password
+    password: req.body.password,
+    isAdmin: Boolean(req.body.isAdmin)
   };
 
   if (!userFromReq.email || !userFromReq.password) {
@@ -40,10 +43,7 @@ export const signUp = async (
       .json({ error: { message: 'The User already Exists' } });
   }
 
-  const newUser: User = await getRepository(User).create({
-    ...userFromReq,
-    isAdmin: false
-  });
+  const newUser: User = await getRepository(User).create(userFromReq);
   const savedUser: User = await getRepository(User).save(newUser);
 
   // Get all public Survey Ids

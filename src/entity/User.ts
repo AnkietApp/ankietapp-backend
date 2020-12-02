@@ -24,7 +24,6 @@ export default class User {
   @Column()
   password: string;
 
-  // TODO Check if works
   @Column({ default: false })
   isAdmin: boolean;
 
