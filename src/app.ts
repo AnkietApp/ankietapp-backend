@@ -33,15 +33,14 @@ app.use(authRoutes);
 app.use(userSurveyResponseRoutes);
 
 const job = new CronJob(
-  '* * * * *',
+  '00 12 * * *',
   () => {
     scheduleEmailReminder();
   },
   null,
   true,
-  'America/Los_Angeles'
+  'Europe/Berlin'
 );
-// job.start();
 
 // Start express server
 app.listen(8080, () => {

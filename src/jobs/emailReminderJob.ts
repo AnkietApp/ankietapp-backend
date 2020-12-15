@@ -5,25 +5,37 @@ import UserSurveyResponse from '../entity/UserSurveyResponse';
 import sendEmail from '../utils/mailgun';
 
 const scheduleEmailReminder = async (): Promise<void> => {
-  console.log('You will see this message every minute');
+  let today: Date = new Date();
+  console.log(today);
+  let tommorow: Date = new Date();
+  tommorow.setDate(tommorow.getDate() + 1);
+  console.log(tommorow);
+
   // Filter out every Survey where dueDate is today
-  const today: Date = new Date('2021-04-23T18:25:44.000Z');
   const surveys = await getRepository(Survey)
     .createQueryBuilder('survey')
     .select(['survey.id', 'survey.dueDate'])
-    .where('survey.dueDate = :today', { today: today })
+    .where('survey.dueDate <= :futureDay AND survey.dueDate >= :today', {
+      futureDay: tommorow,
+      today: today
+    })
     .getMany();
+  console.log('surveys');
   console.log(surveys);
+  const surveyIds = surveys.map((survey) => {
+    return survey.id;
+  });
 
-  // Filter out every UserSurveyResponse where completed is false
+  // Filter out every UserSurveyResponse where completed is false and in surveys
   const submittedResponses = await getRepository(UserSurveyResponse)
     .createQueryBuilder('userSurveyResponse')
     .select(['userSurveyResponse.userId'])
-    .where('userSurveyResponse.completed = true')
+    .where(
+      'userSurveyResponse.completed = false AND userSurveyResponse.surveyId IN (:surveyIds)',
+      { surveyIds: surveyIds }
+    )
     .getMany();
   console.log(submittedResponses);
-
-  // console.log(Date.now());
 
   // Find User emails by userId
   const users = await getRepository(User)
@@ -43,7 +55,7 @@ const scheduleEmailReminder = async (): Promise<void> => {
 
   const from = 'AnkietApp <ankiet@pp.mailgun.org>';
   const subject = `You have survey to complete!`;
-  const content = `Head to: localhost:4200 and finish your survey!`;
+  const content = `Reminder: Head to: localhost:4200 and finish your survey!`;
 
   try {
     await sendEmail(to, from, subject, content);
@@ -64,11 +76,6 @@ const scheduleEmailReminder = async (): Promise<void> => {
   // console.log(surveys[0].dueDate.getTime());
   // if (surveys[0].dueDate.getTime() === today.setTime(today.getDate() + 7)) {
   // if (surveys[0].dueDate === today) {
-  if (surveys[0].dueDate.getTime() === today.getTime()) {
-    console.log('its today!');
-  } else {
-    console.log('not equal');
-  }
 };
 
 export default scheduleEmailReminder;
