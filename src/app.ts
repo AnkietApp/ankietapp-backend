@@ -13,6 +13,7 @@ import surveyRoutes from './routes/survey.routes';
 import authRoutes from './routes/auth.routes';
 import userSurveyResponseRoutes from './routes/usersurveyresponse.routes';
 import scheduleEmailReminder from './jobs/emailReminderJob';
+import reportRoutes from './routes/report.routes';
 
 const app = express();
 createConnection();
@@ -31,6 +32,7 @@ app.use(userRoutes);
 app.use(surveyRoutes);
 app.use(authRoutes);
 app.use(userSurveyResponseRoutes);
+app.use(reportRoutes);
 
 const job = new CronJob(
   '00 12 * * *',
@@ -41,6 +43,7 @@ const job = new CronJob(
   true,
   'Europe/Berlin'
 );
+
 
 // Start express server
 app.listen(8080, () => {
