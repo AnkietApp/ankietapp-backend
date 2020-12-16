@@ -23,7 +23,7 @@ export const updateSurveyResponse = async (
         completed: false
       })
       .getOne();
-    getRepository(UserSurveyResponse).update(userResponse!.id, {
+    await getRepository(UserSurveyResponse).update(userResponse!.id, {
       ...userResponse!,
       completed: true
     });

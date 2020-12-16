@@ -50,7 +50,23 @@ export const getReport = async (
         let html = "<html><head><meta charset=\"UTF-8\"><style>table,th,td{border: 1px solid black; border-collapse: collapse; text-align:center;}</style></head><body><h1>Raport z ankiety: ";
         html += `${survey?.name  }.</h1><br>`;
         
-        html += '<table style="width: 100%">'
+        html += '<table style="width: 100%; font-size: 12px;">'
+
+        let labels: {[key:number]:string} = {};
+        let types: {[key: number]:string} = {};
+
+        for(const question of questions)
+        {
+            labels[question.id] = question.description;
+            types[question.id] = question.type;
+        }
+
+        html += `<tr><td>Email</td>`;
+        for(let key in labels)
+        {
+            html += `<td>${labels[key]}</td>`;
+        }
+        html += "</tr>"
 
         // eslint-disable-next-line no-restricted-syntax
         for(const response of responses)
@@ -62,20 +78,6 @@ export const getReport = async (
             .setParameters({
                 userId: response.userId
             }).getOne();
-
-            let labels: {[key:number]:string} = {}
-
-            for(const question of questions)
-            {
-                labels[question.id] = question.description;
-            }
-
-            html += `<tr><td>Email</td>`;
-            for(let key in labels)
-            {
-                html += `<td>${labels[key]}</td>`;
-            }
-            html += "</tr>"
 
             html += `<tr><td>${ respUser?.email }</td>`;
 
@@ -92,7 +94,23 @@ export const getReport = async (
                 for(const answer of answers)
                 {
                     if(data[answer.questionId] === undefined) data[answer.questionId] = "";
-                    data[answer.questionId] += `${ answer.value } `
+                    if(types[answer.questionId] === "singleChoice" || types[answer.questionId] === "multipleChoice")
+                    {
+                        const choice = await getRepository(Choice)
+                        .createQueryBuilder("choice")
+                        .select()
+                        .where('id = :cid')
+                        .andWhere('questionId = :qid')
+                        .setParameters({
+                            cid: answer.value,
+                            qid: answer.questionId
+                        }).getOne();
+                        data[answer.questionId] += `${ choice?.value } `;
+                    }
+                    else
+                    {
+                        data[answer.questionId] += `${ answer.value } `;
+                    }
                 }
                 for(let key in labels)
                 {
@@ -117,7 +135,6 @@ export const getReport = async (
 
         //Finalize document
         html += "</body></html>";
-        console.log(html);
         let buf = Buffer.from("");
         await asBlob(html).then((data: Buffer) => {
             buf = Buffer.alloc(data.byteLength);
