@@ -33,7 +33,6 @@ $ npm install -g typescript
 $ npm install
 ```
 4. Create .env from example.env then set MAILGUN_API_KEY and MAILGUN_DOMAIN  
-<br />
 5. Run app (PORT 8080)
 ```
 $ npm run dev
