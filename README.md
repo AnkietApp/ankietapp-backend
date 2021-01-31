@@ -4,12 +4,13 @@
 Backend for the survey management app "ankietApp"
 
 ## Features
-- As an administrator there is a possibility to create survey and assign users as a respondents to them
-- Each survey has multiple questions and set due date. 
-- Each question has one of the types: date, text, single choice, multiple choice
-- Every time survey is created, each respondent will be asked via email to fill survey (using Mailgun integration). If survey is public then each user in the system will be asked to fill survey
+- A system administrator can create a survey and assign users as respondents or make a survey public so that each user in the app will be asked to fill the survey
+- Each survey has multiple questions and the due date
+- Each question is one of the four types: date, text, single choice, multiple-choice
+- Every time survey is created, each respondent will be asked via email to fill survey (using Mailgun integration)
+- The respondent will be reminded to fill the survey a day before its due date (cron scheduled job + Mailgun.js)
 ### Example of survey creation
-img
+![AnkietApp](/AnkietApp.jpg)
 
 ## Entity Relationship Diagram
 ![erd-survey](/erd-survey.jpg)
