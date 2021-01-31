@@ -20,21 +20,21 @@ Backend for the survey management app "ankietApp"
 - Mailgun account and private key
 
 ## Install
-Create database
+1. Create database
 ```
 mysql> CREATE DATABASE ankietApp;
 ```
-Install typescript
+2. Install typescript
 ```
 $ npm install -g typescript
 ```
-Install dependencies
+3. Install dependencies
 ```
 $ npm install
 ```
-Create .env from example.env then set MAILGUN_API_KEY and MAILGUN_DOMAIN  
+4. Create .env from example.env then set MAILGUN_API_KEY and MAILGUN_DOMAIN  
 <br />
-Run app (PORT 8080)
+5. Run app (PORT 8080)
 ```
 $ npm run dev
 ```
