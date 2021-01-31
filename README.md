@@ -3,9 +3,20 @@
 ## Description
 Backend for the survey management app "ankietApp"
 
+## Entity Relationship Diagram
+![erd-survey](/erd-survey.jpg)
+
+## Technologies
+- Mailgun integration ✅
+- TypeScript ✅
+- TypeORM ✅
+- MySQL ✅
+- cron (schedule sending email notifications) ✅
+
 ## Requirements
 - Node.js
-- mySQL
+- MySQL
+- Mailgun account and private key
 
 ## Install
 Create database
