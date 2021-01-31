@@ -32,6 +32,8 @@ Install dependencies
 ```
 $ npm install
 ```
+Create .env from example.env then set MAILGUN_API_KEY and MAILGUN_DOMAIN  
+<br />
 Run app (PORT 8080)
 ```
 $ npm run dev
