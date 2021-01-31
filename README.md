@@ -2,7 +2,7 @@
 
 ## Description
 Backend for the survey management app "ankietApp"
-
+<span style="color:red">some *red* text</span>
 ## Features
 - A system administrator can create a survey and assign users as respondents or make a survey public so that each user in the app will be asked to fill the survey
 - Each survey has multiple questions and the due date
