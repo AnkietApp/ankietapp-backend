@@ -11,6 +11,7 @@ Backend for the survey management app "ankietApp"
 - TypeScript ✅
 - TypeORM ✅
 - MySQL ✅
+- Passport.js (JWT authorization) ✅
 - cron (schedule sending email notifications) ✅
 
 ## Requirements
