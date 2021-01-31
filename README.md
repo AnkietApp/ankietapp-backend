@@ -8,11 +8,12 @@ Backend for the survey management app "ankietApp"
 - Each question is one of the four types: date, text, single choice, multiple-choice
 - Every time survey is created, each respondent will be asked via email to fill survey (using 📧 **Mailgun integration** 🔥</span>)
 - The respondent will be reminded to fill the survey a day before its due date (**cron scheduled job** 📆 + **Mailgun.js** 📧</span>)
-### Example of survey creation
-![AnkietApp](/AnkietApp.jpg)
 
 ## Entity Relationship Diagram
 ![erd-survey](/erd-survey.jpg)
+
+## Example of survey creation
+![AnkietApp](/AnkietApp.png)
 
 ## Technologies
 - Mailgun integration ✅
